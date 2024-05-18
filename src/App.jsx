@@ -37,7 +37,7 @@ function App() {
     const loadGoogleMaps = async () => {
       try {
         await loadScript(
-          `https://maps.googleapis.com/maps/api/js?key=AIzaSyCXJYPftqbrbSxG5Bo13RV8QlLNBd_rblE&libraries=geometry`
+          `https://maps.googleapis.com/maps/api/js?key=AIzaSyCXJYPftqbrbSxG5Bo13RV8QlLNBd_rblE&libraries=geometry,marker,places`
         );
         if (window.google) {
           console.log("Google API loaded");
