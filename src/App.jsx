@@ -26,8 +26,10 @@ function App() {
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
   const directionsRendererRef = useRef(null);
+  const driverMarkerRef = useRef(null);
+  const [map, setMap] = useState(null);
   const [driverMarker, setDriverMarker] = useState(null);
-  const [currentPosition, setCurrentPosition] = useState(null);
+  const [currentPosition, setCurrentPosition] = useState(center);
   const [eta, setEta] = useState(null);
   const [distance, setDistance] = useState(null);
 
@@ -44,10 +46,17 @@ function App() {
           const google = window.google;
 
           const map = new google.maps.Map(mapRef.current, {
-            center: center,
+            center: currentPosition,
             zoom: 7,
             mapId: "ca185b9989b6ecc3",
           });
+
+          setMap(map);
+
+          driverMarkerRef.current = driverMarker;
+
+          // Start simulating driver movement
+          simulateDriverMovement();
 
           directionsServiceRef.current = new google.maps.DirectionsService();
           directionsRendererRef.current = new google.maps.DirectionsRenderer();
@@ -114,7 +123,33 @@ function App() {
       }
     };
     loadGoogleMaps();
-  }, [driverMarker]);
+  }, []);
+
+  const simulateDriverMovement = () => {
+    let deltaLat = 0.0001;
+    let deltaLng = 0.0001;
+
+    setInterval(() => {
+      setCurrentPosition((prevPosition) => {
+        const newLat = prevPosition.lat + deltaLat;
+        const newLng = prevPosition.lng + deltaLng;
+
+        if (!isNaN(newLat) && !isNaN(newLng)) {
+          const newPosition = { lat: newLat, lng: newLng };
+
+          if (driverMarkerRef.current) {
+            driverMarkerRef.current.setPosition(newPosition);
+            map.setCenter(newPosition);
+          }
+
+          return newPosition;
+        } else {
+          console.error("Invalid latitude or longitude:", { newLat, newLng });
+          return prevPosition;
+        }
+      });
+    }, 1000); // Update position every second
+  };
 
   const calculateEta = (currentLocation) => {
     if (currentLocation && window.google) {
