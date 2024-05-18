@@ -46,6 +46,7 @@ function App() {
           const map = new google.maps.Map(mapRef.current, {
             center: center,
             zoom: 7,
+            mapId: "ca185b9989b6ecc3",
           });
 
           directionsServiceRef.current = new google.maps.DirectionsService();
@@ -85,7 +86,7 @@ function App() {
                   });
                   setDriverMarker(marker);
                 } else {
-                  driverMarker.setPosition(currentLocation);
+                  driverMarker.position = currentLocation;
                 }
 
                 map.setCenter(currentLocation);
